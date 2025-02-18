@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %} Home {% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center vh-100" style="background: linear-gradient(135deg, #212529, #495057); ">
+    <div class="login-container bg-light rounded shadow-lg p-5" style="width: 50%; max-width: 500px;">
+        <!-- Flash Messages -->
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alert-container">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% endwith %}
+        </div>    
+
+        <!-- Form Header -->
+        <h3 class="text-center mb-4 text-dark"><i class="bi bi-people-fill"></i> Select Your Role</h3>
+
+        <!-- Login Form -->
+        <form action="/login" method="POST">
+            <div class="mb-3">
+                <label for="email" class="form-label"><i class="bi bi-envelope"></i> Email Address</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label"><i class="bi bi-lock"></i> Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <div class="mb-3">
+                <label for="role" class="form-label"><i class="bi bi-person-badge"></i> Select Role</label>
+                <select class="form-select" id="role" name="role" required>
+                    <option value="student" selected>Student</option>
+                    <option value="HOD">HOD</option>
+                    <option value="Coordinator">Coordinator</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2"><i class="bi bi-box-arrow-in-right"></i> Login</button>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

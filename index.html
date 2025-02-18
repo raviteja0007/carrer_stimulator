@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %} Home {% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero bg-primary text-white text-center py-5">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Welcome to Career Stimulator</h1>
+        <p class="lead">Your one-stop solution for career guidance and placement support.</p>
+        <a href="/signup" class="btn btn-light btn-lg me-2">Get Started</a>
+        <a href="{{url_for('login')}}" class="btn btn-outline-light btn-lg">Login</a>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center text-primary">About Us</h2>
+        <p class="text-center text-muted">Our Placement Management System is designed exclusively for the AIML department to streamline placement processes and provide career guidance to students.</p>
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-primary"><i class="bi bi-person-circle me-2"></i>For Students</h5>
+                        <p class="card-text">Access placement data, senior guidance, roadmaps, and alumni talks.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-success"><i class="bi bi-clipboard-data me-2"></i>For HODs</h5>
+                        <p class="card-text">View student details and update career roadmaps to guide them effectively.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-warning"><i class="bi bi-people-fill me-2"></i>For Coordinators</h5>
+                        <p class="card-text">Manage placement drives, update results, and maintain alumni talks.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-5 bg-white">
+    <div class="container">
+        <h2 class="text-center text-primary">Key Features</h2>
+        <div class="row text-center mt-4">
+            <div class="col-md-4">
+                <div class="mb-4">
+                    <div class="icon mb-3">
+                        <i class="bi bi-graph-up fs-1 text-primary"></i>
+                    </div>
+                    <h5>Placement Analytics</h5>
+                    <p>Visualize placement results and trends using interactive charts.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-4">
+                    <div class="icon mb-3">
+                        <i class="bi bi-people fs-1 text-success"></i>
+                    </div>
+                    <h5>Alumni Insights</h5>
+                    <p>Access guidance and advice from successful alumni in the field.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-4">
+                    <div class="icon mb-3">
+                        <i class="bi bi-gear fs-1 text-warning"></i>
+                    </div>
+                    <h5>Easy Management</h5>
+                    <p>Effortlessly manage placement drives, roadmaps, and notifications.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

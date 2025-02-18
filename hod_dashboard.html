@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+
+{% block title %} HOD Dashboard {% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-dark text-white p-3 sidebar">
+            <h4 class="text-center">HOD Dashboard</h4>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <button class="btn btn-link text-white w-100 text-start" onclick="showStudentDetails()"
+                        style="text-decoration: none;">
+                        <i class="bi bi-person-fill"></i> View Student Details
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="btn btn-link text-white w-100 text-start" onclick="showPlacementUpdates()"
+                        style="text-decoration: none;">
+                        <i class="bi bi-bell-fill"></i> Placement Updates
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="btn btn-link text-white w-100 text-start" onclick="showModifyRoadmaps()"
+                        style="text-decoration: none;">
+                        <i class="bi bi-gear-fill"></i> Modify Roadmaps
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{url_for('index')}}">
+                        <i class="bi bi-box-arrow-right"></i> Log out
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-4">
+            <div id="content-area" class="content-area" style="display: block; overflow-y: auto; max-height: calc(100vh - 10vh); padding: 15px;">
+                <style>
+                    #content-area {
+                        overflow-y: auto;
+                        max-height: calc(100vh - 10vh); /* Adjust for proper spacing */
+                        padding: 15px; /* Optional for better spacing inside the content area */
+                    }
+                </style>                
+                <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+                    <div class="text-center">
+                        <h2 class="text-primary">Welcome to HOD Dashboard</h2>
+                        <p class="lead">Select an option from the sidebar to begin exploring your resources.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="container my-4" id="roadmap" style="display: none;">
+                <h1 class="text-center">Roadmaps</h1>
+        
+                <!-- Add New Roadmap Form -->
+                <div class="mb-4">
+                    <h2>Add New Roadmap</h2>
+                    <form id="add-roadmap-form" class="row g-3">
+                        <div class="col-md-6">
+                            <label for="roadmap-title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="roadmap-title" name="title" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="roadmap-image" class="form-label">Roadmap file</label>
+                            <input type="file" class="form-control" id="roadmap-image" name="image_url" required
+                                accept=".jpg">
+                        </div>
+                        <div class="col-12">
+                            <label for="roadmap-description" class="form-label">Description</label>
+                            <textarea class="form-control" id="roadmap-description" rows="3" name="description"
+                                required></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Add Roadmap</button>
+                        </div>
+                    </form>
+                </div>
+        
+                <!-- Roadmaps List -->
+                <div id="roadmap-container" class="row g-3"></div>
+            </div>
+        </main>        
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+    // Fetching Data for Student Details
+    const fetchStudents = async () => {
+        const response = await fetch('/api/students');
+        const students = await response.json();
+        return students;
+    };
+
+   
+    // Main Content Area
+    const contentArea = document.getElementById("content-area");
+
+    // Show Student Details
+
+    const showStudentDetails = async () => {
+        contentArea.style.display = 'block';
+        document.getElementById('roadmap').style.display = 'none';
+        const students = await fetchStudents();
+        let studentHtml = `
+            <h2>Student Details</h2>
+            <div style="height: 100vh" >
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Year</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+        students.forEach(student => {
+            studentHtml += `
+                <tr>
+                    <td>${student.name}</td>
+                    <td>${student.year}</td>
+                </tr>`;
+        });
+        studentHtml += `</tbody></table></div>`;
+        contentArea.innerHTML = studentHtml;
+    };
+
+    // Show Placement Updates
+    // Function to fetch placement updates from the API
+const fetchPlacementUpdates = async () => {
+    try {
+        const response = await fetch('/api/updates');
+        if (!response.ok) {
+            throw new Error('Failed to fetch placement updates');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        alert('Error fetching placement updates');
+        return [];
+    }
+};
+
+// Function to show placement updates
+const showPlacementUpdates = async () => {
+    const updates = await fetchPlacementUpdates();
+
+    let updatesHtml = `
+        <h2>Placement Updates</h2>
+        <div style="height: 100vh;">
+        <p>Here are the recent placement updates submitted by students:</p>
+        <ul>`;
+
+    if (updates.length > 0) {
+        updates.forEach(update => {
+            updatesHtml += `
+                <li>
+                    <strong>${update.name}</strong>: 
+                    Selected at <em>${update.company}</em> with a package of 
+                    <strong>${update.package} LPA</strong> for the role of <em>${update.role}</em>.
+                </li>`;
+        });
+    } else {
+        updatesHtml += `<li>No placement updates available.</li>`;
+    }
+
+    updatesHtml += `</ul></div>`;
+    
+    // Insert the generated HTML into the content area
+    contentArea.innerHTML = updatesHtml;
+};
+
+
+    async function fetchRoadmaps() {
+        try {
+            const response = await fetch('/api/roadmaps'); // Fetch from the Flask API
+            if (!response.ok) throw new Error('Failed to fetch roadmaps');
+
+            const roadmaps = await response.json();
+            displayRoadmaps(roadmaps);
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to load roadmaps.');
+        }
+    }
+
+    function displayRoadmaps(roadmaps) {
+        const container = document.getElementById('roadmap-container');
+        container.innerHTML = ''; // Clear existing content
+
+        roadmaps.forEach(roadmap => {
+            const card = document.createElement('div');
+            card.className = 'col-md-4 roadmap-card';
+
+            card.innerHTML = `
+            <div class="card shadow-sm">
+                <img src="${roadmap.image_url || 'https://via.placeholder.com/400'}" class="card-img-top" alt="${roadmap.title}">
+                <div class="card-body">
+                    <h5 class="card-title">${roadmap.title}</h5>
+                    <p class="card-text">${roadmap.description}</p>
+                    <button class="btn btn-danger delete-roadmap-btn" data-id="${roadmap.id}">Delete</button>
+                </div>
+            </div>
+        `;
+
+            container.appendChild(card);
+        });
+
+        // Attach delete event listeners to the buttons
+        const deleteButtons = document.querySelectorAll('.delete-roadmap-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', () => deleteRoadmap(button.getAttribute('data-id')));
+        });
+    }
+    async function deleteRoadmap(id) {
+        if (!confirm('Are you sure you want to delete this roadmap?')) return;
+
+        try {
+            const response = await fetch(`/api/roadmaps/${id}`, { method: 'DELETE' });
+            if (!response.ok) throw new Error('Failed to delete roadmap');
+
+            alert('Roadmap deleted successfully!');
+            fetchRoadmaps(); // Refresh the roadmap list
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to delete roadmap.');
+        }
+    }
+
+    // Add a new roadmap
+    async function addRoadmap(event) {
+        event.preventDefault();
+
+        const title = document.getElementById('roadmap-title').value;
+        const imageFile = document.getElementById('roadmap-image').files[0]; // Get the uploaded file
+        const description = document.getElementById('roadmap-description').value;
+
+        if (!imageFile || !title || !description) {
+            alert('Please fill out all fields and upload an image.');
+            return;
+        }
+
+        // Create a FormData object to send multipart/form-data
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('image_url', imageFile); // Key should match the backend's `request.files['image_url']`
+        formData.append('description', description);
+
+        try {
+            const response = await fetch('/api/roadmaps', {
+                method: 'POST',
+                body: formData // Send the FormData object directly
+            });
+
+            if (!response.ok) throw new Error('Failed to add roadmap');
+
+            const newRoadmap = await response.json();
+            alert('Roadmap added successfully!');
+            document.getElementById('add-roadmap-form').reset();
+            fetchRoadmaps(); // Refresh the roadmap list
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to add roadmap.');
+        }
+    }
+
+    document.getElementById('add-roadmap-form').addEventListener('submit', addRoadmap);
+
+
+    function showModifyRoadmaps() {
+
+        document.getElementById('content-area').style.display = 'none';
+        document.getElementById('roadmap').style.display = 'block';
+        fetchRoadmaps();
+    }
+</script>
+{% endblock %}
